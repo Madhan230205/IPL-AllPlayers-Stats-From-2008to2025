@@ -168,7 +168,7 @@ ipl_scraper/
 └── README.md               # ← You are here
 ```
 
-# This the visualization of total runs scored by all players played IPL
+# This is the visualization of total runs scored by all players played IPL
 
 ![Totalruns](https://github.com/user-attachments/assets/bafd083b-6144-450e-b399-658c4b98c8ec)
 
