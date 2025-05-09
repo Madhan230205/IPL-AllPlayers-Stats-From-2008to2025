@@ -112,22 +112,22 @@ Google Chrome (latest)
 (Optional) virtualenv or venv
 
 1. Clone & Virtualenv
-git clone https://github.com/Madhan230205/IPL-AllPlayers-Stats-From-2008to2025
+```git clone https://github.com/Madhan230205/IPL-AllPlayers-Stats-From-2008to2025
 cd IPL-AllPlayers-Stats-From-2008to2025
 python -m venv .venv
 source .venv/bin/activate      # Linux / macOS
 .venv\Scripts\activate         # Windows PowerShell
+```
 
 2. Install Dependencies
-pip install --upgrade pip
+```pip install --upgrade pip
 pip install -r requirements.txt
+```
 
 3. Configure Database
 Edit ipl_scraper/settings.py (or your local settings) to set up PostgreSQL:
 
 ```python
-Copy
-Edit
 DATABASES = {
     'default': {
         'ENGINE':   'django.db.backends.postgresql',
@@ -140,17 +140,19 @@ DATABASES = {
 }
 ```
 4. Run Migrations
-python manage.py makemigrations stats
+```python manage.py makemigrations stats
 python manage.py migrate
+```
 
 5. (Optional) Create a Superuser
+```
 python manage.py createsuperuser
-
+```
 # Usage
 1. Run the Scraper
-
+```
 python app.py
-
+```
 This will:
 Spin up headless Chrome
 Scrape all seasons & teams
@@ -159,13 +161,14 @@ Bulk-insert stats into stats_playerseasonstat
 
 2. Inspect via Django Shell / Admin
 
-python manage.py shell
+```python manage.py shell
 >>> from stats.models import PlayerSeasonStat
 >>> PlayerSeasonStat.objects.filter(year=2024, team__icontains='Mumbai')
 Or log in to the Django admin at http://127.0.0.1:8000/admin/ and browse “Player Season Stats.”
+```
 
 # Project Structure
-
+```
 ipl_scraper/
 ├── ipl.py                  # Main scraper entrypoint
 ├── stats/
@@ -177,6 +180,7 @@ ipl_scraper/
 │   └── urls.py
 ├── requirements.txt
 └── README.md               # ← You are here
+```
 
 # Troubleshooting
 1.relation "stats_playerseasonstat" does not exist
