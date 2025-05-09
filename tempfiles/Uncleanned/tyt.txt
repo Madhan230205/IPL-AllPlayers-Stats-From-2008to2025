@@ -1,0 +1,90 @@
+import requests
+import csv
+import time
+from bs4 import BeautifulSoup
+
+# ——— CONFIG —————————————————————————————————————————————————————
+BASE = "https://stats.espncricinfo.com/ci/engine/stats/index.html"
+OUTPUT = "ipl2023_team_stats.csv"
+
+TEAMS = {
+    "Chennai Super Kings": 3,
+    "Delhi Capitals": 164,
+    "Gujarat Titans": 7211,
+    "Kolkata Knight Riders": 117,
+    "Lucknow Super Giants": 13359,
+    "Mumbai Indians": 6,
+    "Punjab Kings": 434,
+    "Rajasthan Royals": 8,
+    "Royal Challengers Bengaluru": 335,
+    "Sunrisers Hyderabad": 574,
+}
+
+# Browser-like headers to avoid 403
+HEADERS = {
+    "User-Agent": ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                   "AppleWebKit/537.36 (KHTML, like Gecko) "
+                   "Chrome/114.0.0.0 Safari/537.36"),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Referer": BASE,
+    "Connection": "keep-alive",
+}
+
+def fetch_stats(session, params):
+    resp = session.get(BASE, params=params, headers=HEADERS, timeout=10)
+    try:
+        resp.raise_for_status()
+    except requests.HTTPError:
+        return [], []
+    soup = BeautifulSoup(resp.text, "html.parser")
+    tables = soup.find_all("table", class_="engineTable")
+    if len(tables) < 3:
+        return [], []
+    table = tables[2]
+    headers = [th.get_text(strip=True) for th in table.find("tr").find_all("th")]
+    rows = []
+    for tr in table.find_all("tr")[1:]:
+        cols = [td.get_text(strip=True) for td in tr.find_all("td")]
+        if cols:
+            rows.append(cols)
+    return headers, rows
+
+if __name__ == "__main__":
+    session = requests.Session()
+    writer = None
+
+    with open(OUTPUT, "w", newline="", encoding="utf-8") as f:
+        for team_name, team_id in TEAMS.items():
+            # Batting for 2023
+            bat_params = {
+                "class": 6,
+                "template": "results",
+                "type": "batting",
+                "year": 2023,             # ← year changed to 2023
+                "team": team_id,
+                "size": 200
+            }
+            bat_headers, bat_data = fetch_stats(session, bat_params)
+
+            # Bowling for 2023
+            bowl_params = bat_params.copy()
+            bowl_params["type"] = "bowling"
+            bowl_headers, bowl_data = fetch_stats(session, bowl_params)
+
+            if writer is None:
+                combined = ["Team"] + \
+                           [f"Bat_{h}" for h in bat_headers] + \
+                           [f"Bowl_{h}" for h in bowl_headers]
+                writer = csv.writer(f)
+                writer.writerow(combined)
+
+            max_len = max(len(bat_data), len(bowl_data))
+            for i in range(max_len):
+                bat_row = bat_data[i] if i < len(bat_data) else [""] * len(bat_headers)
+                bowl_row = bowl_data[i] if i < len(bowl_data) else [""] * len(bowl_headers)
+                writer.writerow([team_name] + bat_row + bowl_row)
+
+            time.sleep(1)
+
+    print(f"Done! IPL 2023 stats saved to {OUTPUT}")
