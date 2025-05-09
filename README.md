@@ -48,61 +48,44 @@ class PlayerSeasonStat(models.Model):
         ordering = ['-year', 'team', 'player']
 ```
 Fields: cover all key batting/bowling aggregates per player per season.
-
 Indexes: accelerate queries by year, team, and the composite (year, team).
-
 Uniqueness: no duplicate (year, team, player) entries.
 
 # Data Processing Pipeline
 Scraper Initialization
 
 1.Launch headless Chrome with Selenium & webdriver_manager.
-
 Iterate seasons (2008–current) and all IPL franchises.
-
 Dynamically adjust URL slugs for renamed teams (e.g., Delhi Daredevils → Delhi Capitals).
 
 2.Page Load & Wait
-
 Navigate to each team-season URL.
-
 Wait (up to 10 s) for the statistics table to appear; skip if missing.
 
 3.Raw Text Extraction
-
 Extract table text, split into lines, and trim whitespace.
 
 4.Header Detection & Row Parsing
-
 Locate the “Player Total Runs” header.
-
 For each player block:
-
 Capture name, role, total runs, and next lines of ball-by-ball stats.
-
 Use re to extract numeric fields, fall back to zero for placeholders ("-").
 
 5.Record Assembly
-
 Build a list of dictionaries—one per player—with keys:
 'Year', 'Team', 'Player', 'Role', 'Total Runs', 'Total Fours', 'Total Sixes', 'Total Wickets', 'Total Dots', 'Total 50s'.
 
 6.Storage in Django
-
 Call save_stats_batch(records) from stats/utils.py.
-
 Internally, ensure the stats_playerseasonstat table exists (auto-create via raw SQL).
-
 Coerce all numeric strings safely to int.
-
 Bulk-insert with ignore_conflicts=True to skip duplicates.
 
 7.Archival & Retention (Optional)
-
 For large archives, you can partition by year or move old seasons into an archive table via a management command.
 
 # Setup & Installation
-Prerequisites
+Prerequisites:
 Python 3.9+
 
 PostgreSQL 12+
@@ -112,7 +95,8 @@ Google Chrome (latest)
 (Optional) virtualenv or venv
 
 1. Clone & Virtualenv
-```git clone https://github.com/Madhan230205/IPL-AllPlayers-Stats-From-2008to2025
+```
+git clone https://github.com/Madhan230205/IPL-AllPlayers-Stats-From-2008to2025
 cd IPL-AllPlayers-Stats-From-2008to2025
 python -m venv .venv
 source .venv/bin/activate      # Linux / macOS
@@ -120,14 +104,16 @@ source .venv/bin/activate      # Linux / macOS
 ```
 
 2. Install Dependencies
-```pip install --upgrade pip
+```
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
-
 3. Configure Database
 Edit ipl_scraper/settings.py (or your local settings) to set up PostgreSQL:
 
 ```python
+Copy
+Edit
 DATABASES = {
     'default': {
         'ENGINE':   'django.db.backends.postgresql',
@@ -140,19 +126,19 @@ DATABASES = {
 }
 ```
 4. Run Migrations
-```python manage.py makemigrations stats
+```
+python manage.py makemigrations stats
 python manage.py migrate
 ```
-
 5. (Optional) Create a Superuser
 ```
 python manage.py createsuperuser
 ```
 # Usage
 1. Run the Scraper
-```
+
 python app.py
-```
+
 This will:
 Spin up headless Chrome
 Scrape all seasons & teams
@@ -160,13 +146,13 @@ Auto-create the DB table if missing
 Bulk-insert stats into stats_playerseasonstat
 
 2. Inspect via Django Shell / Admin
+```
 
-```python manage.py shell
+python manage.py shell
 >>> from stats.models import PlayerSeasonStat
 >>> PlayerSeasonStat.objects.filter(year=2024, team__icontains='Mumbai')
 Or log in to the Django admin at http://127.0.0.1:8000/admin/ and browse “Player Season Stats.”
 ```
-
 # Project Structure
 ```
 ipl_scraper/
@@ -181,7 +167,6 @@ ipl_scraper/
 ├── requirements.txt
 └── README.md               # ← You are here
 ```
-
 # Troubleshooting
 1.relation "stats_playerseasonstat" does not exist
 Ensure stats is in INSTALLED_APPS.
