@@ -1,0 +1,10 @@
+# Core dependencies
+pandas==2.2.2
+selenium==4.21.0
+webdriver-manager==3.9.1
+
+# Django
+Django==5.0.4
+
+# psycopg2 for PostgreSQL (if using PostgreSQL)
+psycopg2-binary==2.9.9
