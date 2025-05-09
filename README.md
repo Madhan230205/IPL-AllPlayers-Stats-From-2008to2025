@@ -169,19 +169,17 @@ ipl_scraper/
 ```
 # Output Screenshots
 This the visualization of total runs scored by all players played IPL
-```
+
 ![Totalruns](https://github.com/user-attachments/assets/bafd083b-6144-450e-b399-658c4b98c8ec)
 
-```
 This is the data collected terminal image from VS Code ,as the AI Web Scraper collected over 2415 data of all IPL players stats
-```
+
 ![Screenshot 2025-05-09 180132](https://github.com/user-attachments/assets/6196747c-d30a-49d3-b185-71464260e62e)
-```
+
 Screenshot of Admin dashboard in PostgreSQL Database
-```
+
 ![image](https://github.com/user-attachments/assets/890e6e81-aea3-46c7-80f4-49efc93edf79)
 
-```
 
 # Troubleshooting
 1.relation "stats_playerseasonstat" does not exist
