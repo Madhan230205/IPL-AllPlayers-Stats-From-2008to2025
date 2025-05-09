@@ -1,0 +1,19 @@
+# Django framework
+Django>=4.0,<5.0
+
+# PostgreSQL support for Django
+psycopg2>=2.9
+
+# Web scraping
+requests>=2.25
+beautifulsoup4>=4.9
+
+# Optional: for handling environment variables (if used)
+python-dotenv>=0.21.0
+
+# Optional: pandas for data processing (if used)
+pandas>=1.3
+
+# Optional: Celery for task scheduling (based on your models)
+celery>=5.2
+django-celery-beat>=2.2
